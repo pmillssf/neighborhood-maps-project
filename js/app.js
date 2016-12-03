@@ -47,31 +47,36 @@ function initMap() { // add timeout
             location: {
                 lat: 37.788862,
                 lng: -122.402976
-            }
+            },
+            icon: 'images/2915103_1.png'
         }, {
             title: 'San Francisco Center for the Book',
             location: {
                 lat: 37.765357,
                 lng: -122.402344
-            }
+            },
+            icon: 'images/book.png'
         }, {
             title: 'Letterform Archive',
             location: {
                 lat: 37.763783,
                 lng: -122.394046
-            }
+            },
+            icon: 'images/schreibwaren_web.png'
         }, {
             title: 'Golden Gate Park Model Yacht Club',
             location: {
                 lat: 37.771221,
                 lng: -122.494308
-            }
+            },
+            icon: 'images/sailing.png'
         }, {
             title: 'Book Club of California',
             location: {
                 lat: 37.789842,
                 lng: -122.405878
-            }
+            },
+            icon: 'images/library.png'
         }
 
     ];
@@ -85,6 +90,7 @@ function initMap() { // add timeout
         map: map,
         position: position,
         title: title,
+        icon: locations[i].icon,
         animation: google.maps.Animation.DROP,
         id: i
       })
@@ -92,9 +98,9 @@ function initMap() { // add timeout
       marker.addListener('click', function(){
         populateInfoWindow(this, infoWindow);
       });
-      bounds.extend(markers[i].position);
+      //bounds.extend(markers[i].position);
     }
-    map.fitBounds(bounds)
+    //map.fitBounds(bounds)
 }
 
 function populateInfoWindow(marker, infowindow) {
