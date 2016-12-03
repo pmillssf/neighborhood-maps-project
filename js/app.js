@@ -75,6 +75,8 @@ function initMap() { // add timeout
         }
 
     ];
+    var infoWindow = new google.maps.InfoWindow();
+    var bounds = new google.maps.LatLngBounds();
     for (var i = 0; i < locations.length; i++) {
       debugger;
       var position = locations[i].location;
@@ -87,5 +89,23 @@ function initMap() { // add timeout
         id: i
       })
       markers.push(marker);
+      marker.addListener('click', function(){
+        populateInfoWindow(this, infoWindow);
+      });
+      bounds.extend(markers[i].position);
     }
+    map.fitBounds(bounds)
+}
+
+function populateInfoWindow(marker, infowindow) {
+  // Check to make sure the infowindow is not already opened on this marker.
+  if (infowindow.marker != marker) {
+    infowindow.marker = marker;
+    infowindow.setContent('<div>' + marker.title + '</div>');
+    infowindow.open(map, marker);
+    // Make sure the marker property is cleared if the infowindow is closed.
+    infowindow.addListener('closeclick',function(){
+      infowindow.setMarker(null);
+    });
+  }
 }
