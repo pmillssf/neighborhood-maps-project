@@ -1,4 +1,5 @@
 var map;
+var marker;
 var markers = []; // Blank array to hold markers
 
 function initMap() { // add timeout
@@ -29,7 +30,7 @@ function initMap() { // add timeout
             featureType: 'administrative',
             elementType: 'labels.text.fill',
             stylers: [{
-                color: '#e85113'
+                color: '#435158'
             }]
         }
     ];
@@ -83,10 +84,9 @@ function initMap() { // add timeout
     var infoWindow = new google.maps.InfoWindow();
     var bounds = new google.maps.LatLngBounds();
     for (var i = 0; i < locations.length; i++) {
-      debugger;
       var position = locations[i].location;
       var title = locations[i].title;
-      var marker = new google.maps.Marker({
+      marker = new google.maps.Marker({
         map: map,
         position: position,
         title: title,
@@ -113,5 +113,12 @@ function populateInfoWindow(marker, infowindow) {
     infowindow.addListener('closeclick',function(){
       infowindow.setMarker(null);
     });
+  };
+  // Add bounce animation to marker on click
+  if (marker.getAnimation() === null) {
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+    setTimeout(function() {
+      marker.setAnimation(null);
+    }, 1400);
   }
 }
