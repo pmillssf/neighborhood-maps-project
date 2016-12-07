@@ -41,7 +41,10 @@ var markers = ko.observableArray([]); // Blank array to hold markers
 var map;
 var marker;
 
-function initMap() { // add timeout
+function initMap() {
+  var googleMapsTimeout = setTimeout(function(){
+    alert("Uh oh, Google Maps has failed to load!");
+  }, 4000)
     var styles = [ // Map color mix of  https://snazzymaps.com/style/30/cobalt and https://snazzymaps.com/style/17/bright-and-bubbly
         {
             featureType: "all",
@@ -82,6 +85,7 @@ function initMap() { // add timeout
         zoom: 13,
         styles: styles
     });
+    clearTimeout(googleMapsTimeout);
     ko.applyBindings(new MapViewModel());
 }
 
