@@ -9,6 +9,9 @@
         margin: 0;
         padding: 0;
       }
+      #dropdown {
+        max-width: 33%
+      }
 
       #map {
         height: 100%;
@@ -16,13 +19,14 @@
     </style>
   </head>
   <body>
-    <div></div>
+    <div id="dropdown">
+      <select data-bind="options: markers, optionsText: 'title'"></select>
+    </div>
     <div id="map"></div>
-    <script src="js/app.js"></script>
-    <script src="js/knockout-3.4.1.js"></script>
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCaJuA474JiGg9VRNn1XmG-QZG2o2yx1c&v=3&callback=initMap">
     </script>
-
+    <script src="js/knockout-3.4.1.js"></script>
+    <script src="js/app.js"></script>
   </body>
 </html>
