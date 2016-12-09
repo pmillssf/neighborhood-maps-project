@@ -10,7 +10,9 @@
         padding: 0;
       }
       #dropdown {
-        max-width: 33%
+        max-width: 33%;
+        margin: 0 auto;
+
       }
 
       #map {
@@ -20,7 +22,7 @@
   </head>
   <body>
     <div id="dropdown">
-      <select data-bind="options: markers, optionsText: 'title'"></select>
+      <select data-bind="options: markers, optionsText: 'title',  optionsCaption: 'pick a location!', value: selectedMarker, showSelected"></select>
     </div>
     <div id="map"></div>
     <script async defer
