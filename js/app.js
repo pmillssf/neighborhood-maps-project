@@ -37,11 +37,10 @@ var locations = ko.observableArray([{
 
 ]);
 var markers = ko.observableArray([]); // Blank array to hold markers
-var selectedMarker = ko.observable();
-var visibleMarkers = ko.observableArray([]);
+var selectedMarker = ko.observable(); // Blank object to hold selected marker from dropdown menu
 var map;
 var marker;
-
+// function to display selected marker from dropdown, including animation and infowindow, and hide other markers
 var showSelected = ko.computed(function() {
   if (markers().length === 5 && typeof(selectedMarker()) === 'object'){
     for (i = 0; i < 5; i++){
@@ -60,6 +59,7 @@ var showSelected = ko.computed(function() {
 });
 
 function initMap() {
+  // Google Maps error handling
   var googleMapsTimeout = setTimeout(function(){
     alert("Uh oh, Google Maps has failed to load!");
   }, 4000);
@@ -112,6 +112,7 @@ function MapViewModel() {
   var self = this;
   var infoWindow = new google.maps.InfoWindow();
   var bounds = new google.maps.LatLngBounds();
+  // marker creation
   for (var i = 0; i < locations().length; i++) {
     var position = locations()[i].location;
     var title = locations()[i].title;
@@ -124,7 +125,6 @@ function MapViewModel() {
       id: i
     });
     markers.push(marker);
-    visibleMarkers.push(true);
     console.log(markers());
     marker.addListener('click', function(){
       populateInfoWindow(this, infoWindow);
@@ -132,6 +132,7 @@ function MapViewModel() {
     bounds.extend(markers()[i].position);
   }
   map.fitBounds(bounds);
+  // window resizing
   google.maps.event.addDomListener(window, 'resize', function() {
   map.fitBounds(bounds);
   map.setCenter({
@@ -140,9 +141,8 @@ function MapViewModel() {
   });
 });
 
-//  self.populateInfoWindow =  populateInfoWindow(selectedMarker());
 }
-
+// InfoWindow population function
 function populateInfoWindow(marker, infowindow) {
   map.setCenter(marker.position);
   // Check to make sure the infowindow is not already opened on this marker.
