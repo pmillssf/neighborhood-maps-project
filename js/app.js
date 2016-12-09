@@ -42,27 +42,27 @@ var map;
 var marker;
 // function to display selected marker from dropdown, including animation and infowindow, and hide other markers
 var showSelected = ko.computed(function() {
-  if (markers().length === 5 && typeof(selectedMarker()) === 'object'){
-    for (i = 0; i < 5; i++){
-      markers()[i].setMap(null)
-    };
-    selectedMarker().setMap(map);
-    map.setCenter(selectedMarker().position);
-    if (selectedMarker().getAnimation() === null) {
-      selectedMarker().setAnimation(google.maps.Animation.BOUNCE);
-      setTimeout(function() {
-        selectedMarker().setAnimation(null);
-      }, 1400);
-    };
-    populateInfoWindow(selectedMarker(), new google.maps.InfoWindow());
-  };
+    if (markers().length === 5 && typeof(selectedMarker()) === 'object') {
+        for (i = 0; i < 5; i++) {
+            markers()[i].setMap(null);
+        }
+        selectedMarker().setMap(map);
+        map.setCenter(selectedMarker().position);
+        if (selectedMarker().getAnimation() === null) {
+            selectedMarker().setAnimation(google.maps.Animation.BOUNCE);
+            setTimeout(function() {
+                selectedMarker().setAnimation(null);
+            }, 1400);
+        }
+        populateInfoWindow(selectedMarker(), new google.maps.InfoWindow());
+    }
 });
 
 function initMap() {
-  // Google Maps error handling
-  var googleMapsTimeout = setTimeout(function(){
-    alert("Uh oh, Google Maps has failed to load!");
-  }, 4000);
+    // Google Maps error handling
+    var googleMapsTimeout = setTimeout(function() {
+        alert("Uh oh, Google Maps has failed to load!");
+    }, 4000);
     var styles = [ // Map color mix of  https://snazzymaps.com/style/30/cobalt and https://snazzymaps.com/style/17/bright-and-bubbly
         {
             featureType: "all",
@@ -109,79 +109,79 @@ function initMap() {
 
 
 function MapViewModel() {
-  var self = this;
-  var infoWindow = new google.maps.InfoWindow();
-  var bounds = new google.maps.LatLngBounds();
-  // marker creation
-  for (var i = 0; i < locations().length; i++) {
-    var position = locations()[i].location;
-    var title = locations()[i].title;
-    marker = new google.maps.Marker({
-      map: map,
-      position: position,
-      title: title,
-      icon: locations()[i].icon,
-      animation: google.maps.Animation.DROP,
-      id: i
+    var infoWindow = new google.maps.InfoWindow();
+    var bounds = new google.maps.LatLngBounds();
+    // marker creation
+    for (var i = 0; i < locations().length; i++) {
+        var position = locations()[i].location;
+        var title = locations()[i].title;
+        marker = new google.maps.Marker({
+            map: map,
+            position: position,
+            title: title,
+            icon: locations()[i].icon,
+            animation: google.maps.Animation.DROP,
+            id: i
+        });
+        markers.push(marker);
+        console.log(markers());
+        marker.addListener('click', function() {
+            populateInfoWindow(this, infoWindow);
+        });
+        bounds.extend(markers()[i].position);
+    }
+    map.fitBounds(bounds);
+    // window resizing
+    google.maps.event.addDomListener(window, 'resize', function() {
+        map.fitBounds(bounds);
+        map.setCenter({
+            lat: 37.7636505,
+            lng: -122.4556266
+        });
     });
-    markers.push(marker);
-    console.log(markers());
-    marker.addListener('click', function(){
-      populateInfoWindow(this, infoWindow);
-    });
-    bounds.extend(markers()[i].position);
-  }
-  map.fitBounds(bounds);
-  // window resizing
-  google.maps.event.addDomListener(window, 'resize', function() {
-  map.fitBounds(bounds);
-  map.setCenter({
-      lat: 37.7636505,
-      lng: -122.4556266
-  });
-});
 
 }
 // InfoWindow population function
 function populateInfoWindow(marker, infowindow) {
-  map.setCenter(marker.position);
-  // Check to make sure the infowindow is not already opened on this marker.
-  if (infowindow.marker != marker) {
-    infowindow.marker = marker;
-    titleHtml = '<h4>' + marker.title + '</h4>';
-    wikiFail = '<div>'+'Wikipedia has failed to load'+'</div>';
-    // WIKIPEDIA api
-    var WikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + marker.title + '&format=json&callback=wikiCallback';
-    var wikiRequestTimeout = setTimeout(function(){
-      infowindow.setContent(titleHtml + wikiFail)}, 4000);
+    map.setCenter(marker.position);
+    // Check to make sure the infowindow is not already opened on this marker.
+    if (infowindow.marker != marker) {
+        infowindow.marker = marker;
+        titleHtml = '<h4>' + marker.title + '</h4>';
+        wikiFail = '<div>' + 'Wikipedia has failed to load' + '</div>';
+        // WIKIPEDIA api
+        var WikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + marker.title + '&format=json&callback=wikiCallback';
+        var wikiRequestTimeout = setTimeout(function() {
+            infowindow.setContent(titleHtml + wikiFail);
+        }, 4000);
 
-    $.ajax({
-    url: WikiUrl,
-    dataType: 'jsonp',
-    }).done (function(response) {
-      var articleList = response[1];
-      var articleStr = articleList[0];
-      var url = 'https://en.wikipedia.org/wiki/' + articleStr;
-      var wikiHtml = '<div>' + 'Learn more: ' + '<a href="' + url + '">' + articleStr + '</a></div>';
-      infowindow.setContent(titleHtml + wikiHtml);
-    clearTimeout(wikiRequestTimeout);
-    if (marker.title === 'Letterform Archive')  {
-      var letterFormHtml = '<div>' + 'Letterform Archive has no wiki page, check out their' + '<a href="http://letterformarchive.org/"> website.</a>' + '</div>';
-      infowindow.setContent(titleHtml + letterFormHtml);
+        $.ajax({
+            url: WikiUrl,
+            dataType: 'jsonp',
+        }).done(function(response) {
+            var articleList = response[1];
+            var articleStr = articleList[0];
+            var url = 'https://en.wikipedia.org/wiki/' + articleStr;
+            var wikiHtml = '<div>' + 'Learn more: ' + '<a href="' + url + '">' + articleStr + '</a></div>';
+            infowindow.setContent(titleHtml + wikiHtml);
+            clearTimeout(wikiRequestTimeout);
+            if (marker.title === 'Letterform Archive') {
+                var letterFormHtml = '<div>' + 'Letterform Archive has no wiki page, check out their' + '<a href="http://letterformarchive.org/"> website.</a>' + '</div>';
+                infowindow.setContent(titleHtml + letterFormHtml);
+            }
+        });
+        infowindow.setContent('<div>' + marker.title + '</div>');
+        infowindow.open(map, marker);
+        // Make sure the marker property is cleared if the infowindow is closed.
+        infowindow.addListener('closeclick', function() {
+            infowindow.setMarker(null);
+        });
     }
-})
-    infowindow.setContent('<div>' + marker.title + '</div>');
-    infowindow.open(map, marker);
-    // Make sure the marker property is cleared if the infowindow is closed.
-    infowindow.addListener('closeclick',function(){
-      infowindow.setMarker(null);
-    });
-  };
-  // Add bounce animation to marker on click
-  if (marker.getAnimation() === null) {
-    marker.setAnimation(google.maps.Animation.BOUNCE);
-    setTimeout(function() {
-      marker.setAnimation(null);
-    }, 1400);
-  }
+    // Add bounce animation to marker on click
+    if (marker.getAnimation() === null) {
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function() {
+            marker.setAnimation(null);
+        }, 1400);
+    }
 }
