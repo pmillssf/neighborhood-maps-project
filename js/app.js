@@ -37,6 +37,7 @@ var locations = ko.observableArray([{
 
 ]);
 var markers = ko.observableArray([]); // Blank array to hold markers
+var visibleMarkers = ko.observableArray([]);
 var selectedMarker = ko.observable(); // Blank object to hold selected marker from dropdown menu
 var map;
 var marker;
@@ -58,6 +59,22 @@ var showSelected = ko.computed(function() {
     }
 });
 
+var query = ko.observable('');
+function search(value) {
+  visibleMarkers.removeAll();
+  if (markers().length === 5) {
+    for (i = 0; i < 5; i++) {
+        markers()[i].setMap(null);
+    }
+    for (var x in markers()) {
+      if(markers()[x].title.toLowerCase().indexOf(value.toLowerCase()) >=0) {
+        visibleMarkers().push(markers()[x]);
+        markers()[x].setMap(map);
+      }
+    }
+}
+};
+query.subscribe(search);
 function initMap() {
     // Google Maps error handling
     var googleMapsTimeout = setTimeout(function() {
@@ -124,6 +141,7 @@ function MapViewModel() {
             id: i
         });
         markers.push(marker);
+        visibleMarkers.push(marker);
         console.log(markers());
         marker.addListener('click', function() {
             populateInfoWindow(this, infoWindow);
