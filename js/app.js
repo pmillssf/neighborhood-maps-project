@@ -61,6 +61,7 @@ var showSelected = ko.computed(function() {
 
 var query = ko.observable('');
 function search(value) {
+  var newBounds = new google.maps.LatLngBounds();
   visibleMarkers.removeAll();
   if (markers().length === 5) {
     for (i = 0; i < 5; i++) {
@@ -70,6 +71,8 @@ function search(value) {
       if(markers()[x].title.toLowerCase().indexOf(value.toLowerCase()) >=0) {
         visibleMarkers().push(markers()[x]);
         markers()[x].setMap(map);
+        newBounds.extend(markers()[x].position);
+        map.fitBounds(newBounds);
       }
     }
 }
@@ -203,3 +206,6 @@ function populateInfoWindow(marker, infowindow) {
         }, 1400);
     }
 }
+function googleError() {
+  alert("Uh oh, Google Maps API has failed to load!");
+};
