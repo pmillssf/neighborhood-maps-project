@@ -110,7 +110,7 @@ function initMap() {
     });
     clearTimeout(googleMapsTimeout);
     ko.applyBindings(new MapViewModel());
-    // clear out infowindows created on initilization 
+    // clear out infowindows created on initilization idea from http://stackoverflow.com/questions/19067027/close-all-info-windows-google-maps-api-v3
     for (var i=0;i<closeInfoWindows.length;i++) {
      closeInfoWindows[i].close();
   }
