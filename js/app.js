@@ -41,6 +41,8 @@ var visibleMarkers = ko.observableArray([]);
 var selectedMarker = ko.observable(); // Blank object to hold selected marker from dropdown menu
 var map;
 var marker;
+var clickLi;
+var closeInfoWindows = [];
 // function to display selected marker from dropdown, including animation and infowindow, and hide other markers
 var showSelected = ko.computed(function() {
     if (markers().length === 5 && typeof(selectedMarker()) === 'object') {
@@ -108,6 +110,10 @@ function initMap() {
     });
     clearTimeout(googleMapsTimeout);
     ko.applyBindings(new MapViewModel());
+    // clear out infowindows created on initilization 
+    for (var i=0;i<closeInfoWindows.length;i++) {
+     closeInfoWindows[i].close();
+  }
 }
 
 
@@ -180,8 +186,8 @@ function populateInfoWindow(marker, infowindow) {
     // Check to make sure the infowindow is not already opened on this marker.
     if (infowindow.marker != marker) {
         infowindow.marker = marker;
-        titleHtml = '<h4>' + marker.title + '</h4>';
-        wikiFail = '<div>' + 'Wikipedia has failed to load' + '</div>';
+        var titleHtml = '<h4>' + marker.title + '</h4>';
+        var wikiFail = '<div>' + 'Wikipedia has failed to load' + '</div>';
         // WIKIPEDIA api
         var WikiUrl = 'https://en.wikipedia.org/w/api.php?action=opensearch&search=' + marker.title + '&format=json&callback=wikiCallback';
         var wikiRequestTimeout = setTimeout(function() {
@@ -209,6 +215,7 @@ function populateInfoWindow(marker, infowindow) {
         infowindow.addListener('closeclick', function() {
             infowindow.marker = null;
         });
+        closeInfoWindows.push(infowindow);
     }
     // Add bounce animation to marker on click
     if (marker.getAnimation() === null) {
@@ -217,6 +224,10 @@ function populateInfoWindow(marker, infowindow) {
             marker.setAnimation(null);
         }, 1400);
     }
+}
+// function to load infowindow on click of list item
+function liClicked(clickLi) {
+  populateInfoWindow(clickLi, new google.maps.InfoWindow());
 }
 
 function googleError() {
