@@ -130,7 +130,6 @@ function MapViewModel() {
         });
         markers.push(marker);
         visibleMarkers.push(marker);
-      //  console.log(markers());
         marker.addListener('click', function() {
             populateInfoWindow(this, infoWindow);
         });
@@ -151,32 +150,23 @@ function MapViewModel() {
     self.filteredListItems = ko.computed(function() {
         var newBounds = new google.maps.LatLngBounds();
         var searchString = query().toLowerCase();
-       // console.log(searchString);
-       console.log("--------");
         if (!searchString) {
-          for (i = 0; i < 5; i++) {
-              visibleMarkers()[i].setVisible(true);
-          }
-         //   console.log("no input");
+            for (i = 0; i < 5; i++) {
+                visibleMarkers()[i].setVisible(true);
+            }
             return visibleMarkers();
         } else {
-          //console.log("input");
-          //return [];
             return ko.utils.arrayFilter(visibleMarkers(), function(marker) {
                 var title = marker.title.toLowerCase();
                 var match = title.indexOf(searchString) != -1;
                 if (match === true) {
-                  marker.setVisible(true);
-                  newBounds.extend(marker.position);
-                  map.fitBounds(newBounds);
+                    marker.setVisible(true);
+                    newBounds.extend(marker.position);
+                    map.fitBounds(newBounds);
                 } else {
-                  marker.setVisible(false);
-                 }
-
-                console.log(title, searchString, match);
-
-
-               return match;
+                    marker.setVisible(false);
+                }
+                return match;
             });
         }
 
@@ -228,6 +218,7 @@ function populateInfoWindow(marker, infowindow) {
         }, 1400);
     }
 }
+
 function googleError() {
-  alert("Uh oh, Google Maps API has failed to load!");
-};
+    alert("Uh oh, Google Maps API has failed to load!");
+}
