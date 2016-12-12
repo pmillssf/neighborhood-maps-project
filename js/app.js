@@ -61,26 +61,6 @@ var showSelected = ko.computed(function() {
 
 var query = ko.observable('');
 
-function search(value) {
-  var newBounds = new google.maps.LatLngBounds();
-  visibleMarkers.removeAll();
-  if (markers().length === 5) {
-    for (i = 0; i < 5; i++) {
-        markers()[i].setMap(null);
-    }
-    for (var x in markers()) {
-      if(markers()[x].title.toLowerCase().indexOf(value.toLowerCase()) >=0) {
-        visibleMarkers().push(markers()[x]);
-        markers()[x].setMap(map);
-        newBounds.extend(markers()[x].position);
-        map.fitBounds(newBounds);
-      }
-    }
-}
-};
-
-//query.subscribe(search);
-
 function initMap() {
     // Google Maps error handling
     var googleMapsTimeout = setTimeout(function() {
@@ -173,14 +153,23 @@ function MapViewModel() {
        // console.log(searchString);
        console.log("--------");
         if (!searchString) {
+          for (i = 0; i < 5; i++) {
+              visibleMarkers()[i].setVisible(true);
+          }
          //   console.log("no input");
             return visibleMarkers();
         } else {
           //console.log("input");
           //return [];
             return ko.utils.arrayFilter(visibleMarkers(), function(marker) {
+              debugger;
                 var title = marker.title.toLowerCase();
                 var match = title.indexOf(searchString) != -1;
+                if (match === true) {
+                  marker.setVisible(true);
+                } else {
+                  marker.setVisible(false);
+                 }
 
                 console.log(title, searchString, match);
 
