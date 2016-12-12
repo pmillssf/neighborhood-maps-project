@@ -45,9 +45,9 @@ var marker;
 var showSelected = ko.computed(function() {
     if (markers().length === 5 && typeof(selectedMarker()) === 'object') {
         for (i = 0; i < 5; i++) {
-            markers()[i].setMap(null);
+            markers()[i].setVisible(false);
         }
-        selectedMarker().setMap(map);
+        selectedMarker().setVisible(true);
         map.setCenter(selectedMarker().position);
         if (selectedMarker().getAnimation() === null) {
             selectedMarker().setAnimation(google.maps.Animation.BOUNCE);
@@ -149,6 +149,7 @@ function MapViewModel() {
 
     // http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
     self.filteredListItems = ko.computed(function() {
+        var newBounds = new google.maps.LatLngBounds();
         var searchString = query().toLowerCase();
        // console.log(searchString);
        console.log("--------");
@@ -162,16 +163,18 @@ function MapViewModel() {
           //console.log("input");
           //return [];
             return ko.utils.arrayFilter(visibleMarkers(), function(marker) {
-              debugger;
                 var title = marker.title.toLowerCase();
                 var match = title.indexOf(searchString) != -1;
                 if (match === true) {
                   marker.setVisible(true);
+                  newBounds.extend(marker.position);
+                  map.fitBounds(newBounds);
                 } else {
                   marker.setVisible(false);
                  }
 
                 console.log(title, searchString, match);
+
 
                return match;
             });
@@ -214,7 +217,7 @@ function populateInfoWindow(marker, infowindow) {
         infowindow.open(map, marker);
         // Make sure the marker property is cleared if the infowindow is closed.
         infowindow.addListener('closeclick', function() {
-            infowindow.setMarker(null);
+            infowindow.marker = null;
         });
     }
     // Add bounce animation to marker on click
