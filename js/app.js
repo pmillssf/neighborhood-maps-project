@@ -60,6 +60,7 @@ var showSelected = ko.computed(function() {
 });
 
 var query = ko.observable('');
+
 function search(value) {
   var newBounds = new google.maps.LatLngBounds();
   visibleMarkers.removeAll();
@@ -77,7 +78,9 @@ function search(value) {
     }
 }
 };
-query.subscribe(search);
+
+//query.subscribe(search);
+
 function initMap() {
     // Google Maps error handling
     var googleMapsTimeout = setTimeout(function() {
@@ -129,6 +132,8 @@ function initMap() {
 
 
 function MapViewModel() {
+    var self = this;
+
     var infoWindow = new google.maps.InfoWindow();
     var bounds = new google.maps.LatLngBounds();
     // marker creation
@@ -145,7 +150,7 @@ function MapViewModel() {
         });
         markers.push(marker);
         visibleMarkers.push(marker);
-        console.log(markers());
+      //  console.log(markers());
         marker.addListener('click', function() {
             populateInfoWindow(this, infoWindow);
         });
@@ -160,6 +165,31 @@ function MapViewModel() {
             lng: -122.4556266
         });
     });
+
+
+    // http://www.knockmeout.net/2011/04/utility-functions-in-knockoutjs.html
+    self.filteredListItems = ko.computed(function() {
+        var searchString = query().toLowerCase();
+       // console.log(searchString);
+       console.log("--------");
+        if (!searchString) {
+         //   console.log("no input");
+            return visibleMarkers();
+        } else {
+          //console.log("input");
+          //return [];
+            return ko.utils.arrayFilter(visibleMarkers(), function(marker) {
+                var title = marker.title.toLowerCase();
+                var match = title.indexOf(searchString) != -1;
+
+                console.log(title, searchString, match);
+
+               return match;
+            });
+        }
+
+    });
+
 
 }
 // InfoWindow population function

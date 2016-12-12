@@ -29,6 +29,7 @@
   <body>
     <div id="userinputs">
       <div id="searchbar">
+       <!--http://knockoutjs.com/documentation/textinput-binding.html -->
        <input placeholder="Search…" type="search" name="q" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
       </div>
       <div id="dropdown">
@@ -36,7 +37,7 @@
       </div>
     </div>
     <div class="content">
-      <ul data-bind="template: {name:'visibleMarker', foreach: visibleMarkers}">
+      <ul data-bind="template: {name:'visibleMarker', foreach: filteredListItems}">
       </ul>
     </div>
     <script data-proofer-ignore type="text/html" id="visibleMarker">
